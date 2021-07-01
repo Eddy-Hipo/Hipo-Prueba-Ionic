@@ -8,6 +8,7 @@ export class TODO {
   $key: string;
   userMessage: string;
   message: string;
+  time: Date;
 }
 
 @Injectable({
@@ -25,7 +26,7 @@ export class FirebaseService {
     }
 
     getChats(){
-      return this.ngFirestore.collection('chats').snapshotChanges();
+      return this.ngFirestore.collection('chats', ref => ref.orderBy("time", "asc")).snapshotChanges();
     }
 
     getName(id: string){

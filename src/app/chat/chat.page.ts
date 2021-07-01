@@ -2,11 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../services/authentication.service'
 import { FirebaseService } from '../services/firebase.service';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import * as moment from 'moment';
+import 'moment/locale/pt-br';
 
 export class TODO {
   $key: string;
   userMessage: string;
   message: string;
+  time: Date;
 }
 
 @Component({
@@ -18,9 +21,9 @@ export class ChatPage implements OnInit {
 
   todoForm: FormGroup;
   todoForm2: FormGroup;
-  userEmail: string;
   userUid: string;
   userName: string;
+  timeAc: Date;
   Chats: TODO[];
 
   constructor(
@@ -33,12 +36,11 @@ export class ChatPage implements OnInit {
     this.authService.userDetails().subscribe(res => {
       console.log('datos res', res);
       if (res !== null) {
-        this.userEmail = res.email;
         this.userUid = res.uid;
         this.firebaseService.getName(this.userUid).subscribe(res=>{
-          console.log('datos res firebase', res);
+          //console.log('datos res firebase', res);
           if(res !== null){
-            console.log('datos res firebase name', res['name']);
+            //console.log('datos res firebase name', res['name']);
             this.userName = res['name']
           }
         })
@@ -74,9 +76,8 @@ export class ChatPage implements OnInit {
       this.todoForm2 = this.formBuilder.group({
         userMessage: this.userName,
         message:  this.todoForm.value.message,
+        time: moment().format('MMMM Do YYYY, h:mm:ss a')
       })
-      console.log("datos del form",this.todoForm.value);
-      console.log("datos del usuario form",this.userName);
       console.log("datos del unidos",this.todoForm2.value);
       this.firebaseService.create(this.todoForm2.value)
       .then(()=>{
